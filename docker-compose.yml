@@ -13,9 +13,14 @@ services:
   director:
     image: 172.16.0.145:5000/bacula_director:latest
     tty: true
-    ports: 
-      - "9001:80"
+    # ports: 
+    #   - "9001:80"
     volumes:
       - ./director/data:/etc/bacula/
+    networks:
+      rede_gerencia:
+        ipv4_address: 172.16.0.180
     depends_on: 
       - catalog
+networks:
+  rede_gerencia:
