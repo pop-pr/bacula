@@ -1,0 +1,24 @@
+version: '2'
+services:
+  catalog:
+    image: mysql:5.7
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bacula
+      MYSQL_USER: bacula
+      MYSQL_PASSWORD: bacula
+    volumes:
+       - catalog_volume:/var/lib/mysql
+       - ./catalog/db_scripts:/docker-entrypoint-initdb.d/
+  director:
+    image: 172.16.0.145:5000/bacula_director:latest
+    tty: true
+    ports: 
+      - "9001:80"
+    volumes:
+      - director_volume:/etc/bacula/
+    depends_on: 
+      - catalog
+volumes:
+  catalog_volume:
+  director_volume:
