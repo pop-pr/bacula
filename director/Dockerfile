@@ -67,11 +67,14 @@ RUN ["/bin/bash", "-c","./etc/bacula/scripts/installWebBacula.sh"]
 VOLUME /etc/bacula
 COPY ./scripts/entrypoint.sh /docker-entrypoint.d
 RUN chmod +x /docker-entrypoint.d/entrypoint.sh
+
 ENTRYPOINT ["/docker-entrypoint.d/entrypoint.sh"]
 
-CMD /etc/init.d/bacula-director start && \
-    /etc/init.d/bacula-fd start && \
-    /etc/init.d/bacula-sd start && \
-    /etc/init.d/ssh start && \
-    /etc/init.d/apache2 start && \
-    bconsole
+CMD bconsole
+
+# CMD /etc/init.d/bacula-director start && \
+#     /etc/init.d/bacula-fd start && \
+#     /etc/init.d/bacula-sd start && \
+#     /etc/init.d/ssh start && \
+#     /etc/init.d/apache2 start && \
+#     bconsole
