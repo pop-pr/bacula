@@ -1,4 +1,4 @@
-version: '2'
+version: '2.3'
 services:
   catalog:
     image: mysql:5.7
@@ -8,19 +8,25 @@ services:
       MYSQL_USER: bacula
       MYSQL_PASSWORD: bacula
     volumes:
-       - ./catalog/data:/var/lib/mysql
-       - ./catalog/db_scripts:/docker-entrypoint-initdb.d/
+      - ./catalog/data:/var/lib/mysql
+      - ./catalog/db_scripts:/docker-entrypoint-initdb.d/
+    networks: 
+      default:
   director:
     image: 172.16.0.145:5000/bacula_director:latest
     tty: true
-    # ports: 
-    #   - "9001:80"
     volumes:
-      - ./director/data:/etc/bacula/
+      - type: bind
+        source: ./director/data
+        target: /etc/bacula
     networks:
       rede_gerencia:
         ipv4_address: 172.16.0.180
+      default:
+    command: /bin/bash
     depends_on: 
       - catalog
 networks:
   rede_gerencia:
+    external: true
+  default:
