@@ -5,22 +5,6 @@ LOCK="entrypoint.lock"
 SRC_DIR="/usr/src/bacula"
 BACULA_DIR="/etc/bacula"
 
-if [ -f "$BACULA_DIR/$LOCK" ]; then
-    echo "Entrypoint Script already runned"
-    start_process    
-    exit 0
-fi
-
-if [ -d $SRC_DIR ]; then
-    cp -rf $SRC_DIR $BACULA_DIR
-    if [ -t $? ]; then
-        echo "creating lock_file"
-        touch "$BACULA_DIR/$LOCK"
-        echo "$BACULA_DIR/$LOCK"
-    fi    
-    start_process
-fi
-
 start_process()
 {
     echo "Starting processes"
@@ -31,5 +15,21 @@ start_process()
     /etc/init.d/apache2 start 
     bconsole
 }
+
+if [ -f "$BACULA_DIR/$LOCK" ]; then
+    echo "Entrypoint Script already runned"
+    start_process    
+    exit 0
+fi
+
+if [ -d $SRC_DIR ]; then
+    cp -rf "$SRC_DIR/" "$BACULA_DIR/"
+    if [ -t $? ]; then
+        echo "creating lock_file"
+        touch "$BACULA_DIR/$LOCK"
+        echo "$BACULA_DIR/$LOCK"
+    fi    
+    start_process
+fi
 echo "Entrypoint Finished"
 exit 0
