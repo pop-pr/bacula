@@ -22,8 +22,7 @@ services:
     networks:
       rede_gerencia:
         ipv4_address: 172.16.0.180
-      default:
-    command: /bin/bash
+      default:    
     depends_on: 
       - catalog
 networks:
