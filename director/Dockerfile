@@ -14,8 +14,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openssh-server \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir /docker-entrypoint.d /usr/src/bacula
+
 # Creates director's definition sub-directories
-RUN cd /etc/bacula/ && mkdir \
+RUN cd /usr/src/bacula/ && mkdir \
     clients \
     file_sets \
     jobs \
@@ -29,18 +31,18 @@ RUN cd /etc/bacula/ && mkdir \
 # Changes permission 
 RUN cd /etc/bacula && chown bacula:bacula *
 # Copies template files
-COPY templates/bacula-dir.conf /etc/bacula/
-COPY templates/bacula-fd.conf /etc/bacula/
-COPY templates/bacula-sd.conf /etc/bacula/
-COPY templates/bconsole.conf /etc/bacula/
-COPY templates/director_client.conf /etc/bacula/clients/
-COPY templates/director_storage.conf /etc/bacula/storages/
-COPY templates/file_sets.conf /etc/bacula/file_sets/
-COPY templates/job_defs.conf /etc/bacula/job_defs/
-COPY templates/jobs.conf /etc/bacula/jobs/
-COPY templates/messages.conf /etc/bacula/messages/
-COPY templates/pools.conf /etc/bacula/pools/
-COPY templates/schedules.conf /etc/bacula/schedules/
+COPY templates/bacula-dir.conf /usr/src/bacula/
+COPY templates/bacula-fd.conf /usr/src/bacula/
+COPY templates/bacula-sd.conf /usr/src/bacula/
+COPY templates/bconsole.conf /usr/src/bacula/
+COPY templates/director_client.conf /usr/src/bacula/clients/
+COPY templates/director_storage.conf /usr/src/bacula/storages/
+COPY templates/file_sets.conf /usr/src/bacula/file_sets/
+COPY templates/job_defs.conf /usr/src/bacula/job_defs/
+COPY templates/jobs.conf /usr/src/bacula/jobs/
+COPY templates/messages.conf /usr/src/bacula/messages/
+COPY templates/pools.conf /usr/src/bacula/pools/
+COPY templates/schedules.conf /usr/src/bacula/schedules/
 
 RUN useradd -s /bin/bash -g root -G sudo -p 0lambda popuser
 
@@ -61,6 +63,11 @@ COPY scripts/ /etc/bacula/scripts/
 RUN ["/bin/bash", "-c","./etc/bacula/scripts/installWebBacula.sh"]
 
 ## WEBACULA_END
+
+VOLUME /etc/bacula
+COPY ./scripts/entrypoint.sh /docker-entrypoint.d
+RUN chmod +x /docker-entrypoint.d/entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.d/entrypoint.sh"]
 
 CMD /etc/init.d/bacula-director start && \
     /etc/init.d/bacula-fd start && \
