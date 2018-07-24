@@ -1,6 +1,10 @@
 FROM ubuntu:latest
 
-RUN apt-get update && apt install -y apt-utils python    
+RUN apt-get update && apt install -y \
+    apt-utils \
+    curl \
+    python
+        
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/mailname string desenvolvimento@pop-pr.rnp.br'"]
