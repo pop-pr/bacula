@@ -12,6 +12,7 @@ services:
       - ./catalog/db_scripts:/docker-entrypoint-initdb.d/
     networks: 
       default:
+    restart: always
   director:
     image: 172.16.0.145:5000/bacula_director:latest
     tty: true
@@ -25,6 +26,13 @@ services:
       default:    
     depends_on: 
       - catalog
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost/webacula/"]
+      interval: 5 minutes
+      timeout: 5s
+      retries: 3
+      start_period: 50s
 networks:
   rede_gerencia:
     external: true
