@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN apt-get update && apt install -y apt-utils     
+RUN apt-get update && apt install -y apt-utils python    
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/mailname string desenvolvimento@pop-pr.rnp.br'"]
@@ -71,10 +71,3 @@ RUN chmod +x /docker-entrypoint.d/entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.d/entrypoint.sh"]
 
 CMD bconsole
-
-# CMD /etc/init.d/bacula-director start && \
-#     /etc/init.d/bacula-fd start && \
-#     /etc/init.d/bacula-sd start && \
-#     /etc/init.d/ssh start && \
-#     /etc/init.d/apache2 start && \
-#     bconsole
