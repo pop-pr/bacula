@@ -3,7 +3,7 @@
 LOCK="entrypoint.lock"
 SRC_DIR="/usr/src/bacula"
 BACULA_DIR="/etc/bacula"
-CP="cp --preserve --recursive --force --verbose"
+CP="/bin/cp -Rf"
 
 start_process()
 {
@@ -28,9 +28,10 @@ test_lock()
 main()
 {
     test_lock
-    if [ -d $SRC_DIR ]; then
-        $CP "$SRC_DIR/*" "$BACULA_DIR/"
-        if [ -t $? ]; then
+    if [ -d $SRC_DIR ]; then        
+        result=0
+        $CP $SRC_DIR/* $BACULA_DIR/ && result=1
+        if [ $result -eq 1 ]; then
             echo "creating lock_file"
             touch "$BACULA_DIR/$LOCK"
             echo "$BACULA_DIR/$LOCK"
@@ -41,3 +42,5 @@ main()
     exit 0
 }
 main
+
+
