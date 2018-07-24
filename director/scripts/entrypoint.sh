@@ -14,6 +14,7 @@ start_process()
     /etc/init.d/bacula-director start     
     /etc/init.d/ssh start 
     /etc/init.d/apache2 start    
+    bconsole
     echo "Done!"
 }
 
