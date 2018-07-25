@@ -13,9 +13,8 @@ start_process()
     /etc/init.d/bacula-sd start 
     /etc/init.d/bacula-director start     
     /etc/init.d/ssh start 
-    /etc/init.d/apache2 start    
-    bconsole
-    echo "Done!"
+    /etc/init.d/apache2 start            
+    echo "Done!"    
 }
 
 test_bacula()
@@ -69,13 +68,21 @@ copy_files()
     return $result 
 }
 
+start_console()
+{
+    echo "Entrypoint Finished"
+    echo "Starting console..."
+    bconsole
+}
+
 main()
 {
     test_lock
     local lock=$?    
     if [ $lock -eq 0 ]; then
         start_process
-        test_bacula    
+        test_bacula
+        start_console    
         exit 0
     fi
     copy_files    
@@ -88,8 +95,8 @@ main()
     if [ $test -eq 1 ]; then        
         echo 'Failed'
         exit 1
-    fi
-    echo "Entrypoint Finished"    
-    exit 0
+    fi            
+    start_console
+    
 }
 main
