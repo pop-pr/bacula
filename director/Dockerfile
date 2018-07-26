@@ -1,24 +1,30 @@
-FROM ubuntu:latest
+FROM ubuntu:latest    
 
-RUN apt-get update && apt install -y \
-    apt-utils \
-    curl \
-    python
+## Set TZDAT to America/Sao_paulo
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
         
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/mailname string desenvolvimento@pop-pr.rnp.br'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/main_mailer_type string' 'Internet Site'"]
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     bacula-console \    
     bacula-common-mysql \
     bacula-director-mysql \
     bacula-fd \
-    bacula-sd \
-    openssh-server \
+    bacula-sd \ 
+    ntp \   
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /docker-entrypoint.d /usr/src/bacula
+## Overides the NTP conf with ours (POP-PR)
+COPY templates/ntpd.conf /etc/ntp.conf
+
+RUN mkdir \
+    /docker-entrypoint.d \
+    /docker-healthcheck.d \
+    /usr/src/bacula 
+    
 
 # Creates director's definition sub-directories
 RUN cd /usr/src/bacula/ && mkdir \
@@ -48,8 +54,6 @@ COPY templates/messages.conf /usr/src/bacula/messages/
 COPY templates/pools.conf /usr/src/bacula/pools/
 COPY templates/schedules.conf /usr/src/bacula/schedules/
 
-RUN useradd -s /bin/bash -g root -G sudo -p 0lambda popuser
-
 ## WEBACULA
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -60,8 +64,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     php-dev \
     php-gd \    
     php-mcrypt \    
-    php-mysqlnd \
-    sudo 
+    php-mysqlnd     
 
 COPY scripts/ /etc/bacula/scripts/
 RUN ["/bin/bash", "-c","./etc/bacula/scripts/installWebBacula.sh"]
@@ -69,9 +72,13 @@ RUN ["/bin/bash", "-c","./etc/bacula/scripts/installWebBacula.sh"]
 ## WEBACULA_END
 
 VOLUME /etc/bacula
-COPY ./scripts/entrypoint.sh /docker-entrypoint.d
-RUN chmod +x /docker-entrypoint.d/entrypoint.sh
 
+COPY ./scripts/entrypoint.sh /docker-entrypoint.d
+COPY ./scripts/healthcheck.sh /docker-healthcheck.d
+RUN chmod +x /docker-entrypoint.d/entrypoint.sh
+RUN chmod +x /docker-healthcheck.d/healthcheck.sh
+
+HEALTHCHECK --interval=1m --timeout=10s --start-period=10s --retries=1 CMD ["/docker-healthcheck.d/healthcheck.sh"]
 ENTRYPOINT ["/docker-entrypoint.d/entrypoint.sh"]
 
 CMD bconsole
