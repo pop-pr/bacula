@@ -12,7 +12,7 @@ start_process()
     /etc/init.d/bacula-fd start 
     /etc/init.d/bacula-sd start 
     /etc/init.d/bacula-director start     
-    /etc/init.d/ssh start 
+    /etc/init.d/ntp start 
     /etc/init.d/apache2 start            
     echo "Done!"    
 }
