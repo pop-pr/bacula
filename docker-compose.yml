@@ -1,5 +1,6 @@
 version: '2.3'
 services:
+  container_name: bacula_catalog
   catalog:
     image: mysql:5.7
     environment: 
@@ -14,6 +15,7 @@ services:
       default:
     restart: always
   director:
+    container_name: bacula_director
     image: 172.16.0.145:5000/bacula_director:latest
     tty: true
     volumes:
@@ -27,12 +29,6 @@ services:
     depends_on: 
       - catalog
     restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "localhost/webacula/"]
-      interval: 5 minutes
-      timeout: 5s
-      retries: 3
-      start_period: 50s
 networks:
   rede_gerencia:
     external: true
