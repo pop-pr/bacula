@@ -4,7 +4,7 @@
 
 WEBACULA_DIR="webacula"
 WEB_DIR="/var/www/"
-BACULA_SCRIPT_DIR="/etc/bacula/scripts/"
+BACULA_SCRIPT_DIR="/usr/src/bacula/scripts/"
 APACHE_SITES='/etc/apache2/sites-available/'
 WEBACULA_GZ="7.5.3.tar.gz"
 TEMPLATES="webacula_files"
