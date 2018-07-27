@@ -1,9 +1,15 @@
 FROM ubuntu:latest    
 
+## Exclude documentation
+COPY templates/01_nodoc /etc/dpkg/dpkg.cfg.d/
+##
+
 ## Set TZDAT to America/Sao_paulo
 ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-        
+##
+
+## Installs bacula packages
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/mailname string desenvolvimento@pop-pr.rnp.br'"]
@@ -13,12 +19,9 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     bacula-common-mysql \
     bacula-director-mysql \
     bacula-fd \
-    bacula-sd \ 
-    ntp \   
+    bacula-sd \     
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-## Overides the NTP conf with ours (POP-PR)
-COPY templates/ntpd.conf /etc/ntp.conf
+##
 
 RUN mkdir \
     /docker-entrypoint.d \
@@ -36,6 +39,7 @@ RUN cd /usr/src/bacula/ && mkdir \
     messages \
     pools \
     schedules \
+    scripts \
     storages 
 
 # Changes permission 
@@ -53,9 +57,9 @@ COPY templates/jobs.conf /usr/src/bacula/jobs/
 COPY templates/messages.conf /usr/src/bacula/messages/
 COPY templates/pools.conf /usr/src/bacula/pools/
 COPY templates/schedules.conf /usr/src/bacula/schedules/
+##
 
 ## WEBACULA
-
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apache2 \
     libapache2-mod-php \
@@ -66,10 +70,9 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     php-mcrypt \    
     php-mysqlnd     
 
-COPY scripts/ /etc/bacula/scripts/
-RUN ["/bin/bash", "-c","./etc/bacula/scripts/installWebBacula.sh"]
-
-## WEBACULA_END
+COPY scripts/ /usr/src/bacula/scripts/
+RUN ["/bin/bash", "-c","./usr/src/bacula/scripts/installWebBacula.sh"]
+##
 
 VOLUME /etc/bacula
 
@@ -79,6 +82,7 @@ RUN chmod +x /docker-entrypoint.d/entrypoint.sh
 RUN chmod +x /docker-healthcheck.d/healthcheck.sh
 
 HEALTHCHECK --interval=1m --timeout=10s --start-period=10s --retries=1 CMD ["/docker-healthcheck.d/healthcheck.sh"]
+
 ENTRYPOINT ["/docker-entrypoint.d/entrypoint.sh"]
 
-CMD bconsole
+CMD tail -f /var/log/bacula/bacula.log
