@@ -5,6 +5,7 @@ SRC_DIR="/usr/src/bacula"
 BACULA_DIR="/etc/bacula"
 CP="/bin/cp -Rf"
 CHWON="/bin/chown -R"
+BACULA_LOG="/var/log/bacula/bacula.log"
 
 start_process()
 {
@@ -68,11 +69,14 @@ copy_files()
     return $result 
 }
 
-start_console()
+console_log()
 {
     echo "Entrypoint Finished"
-    echo "Starting console..."
-    bconsole
+    echo "Creating log file..."
+    touch $BACULA_LOG
+    chown bacula:bacula $BACULA_LOG    
+    echo "Reading bacula messages"
+    echo "LOG START" >> $BACULA_LOG        
 }
 
 main()
@@ -82,21 +86,21 @@ main()
     if [ $lock -eq 0 ]; then
         start_process
         test_bacula
-        start_console    
-        exit 0
+        console_log                
+    else    
+        copy_files    
+        local result=$?    
+        create_lock $result            
+        change_perms
+        start_process
+        test_bacula
+        local test=$?    
+        if [ $test -eq 1 ]; then        
+            echo 'Failed'
+            exit 1
+        fi            
+        console_log
     fi
-    copy_files    
-    local result=$?    
-    create_lock $result            
-    change_perms
-    start_process
-    test_bacula
-    local test=$?    
-    if [ $test -eq 1 ]; then        
-        echo 'Failed'
-        exit 1
-    fi            
-    start_console
-    
 }
 main
+exec "$@"
