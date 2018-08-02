@@ -1,7 +1,7 @@
 version: '2.3'
-services:
-  container_name: bacula_catalog
+services:  
   catalog:
+    container_name: bacula_catalog
     image: mysql:5.7
     environment: 
       MYSQL_ROOT_PASSWORD: root

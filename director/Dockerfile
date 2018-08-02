@@ -70,7 +70,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     php-mcrypt \    
     php-mysqlnd     
 
-COPY scripts/ /usr/src/bacula/scripts/
+COPY ./scripts /usr/src/bacula/scripts/
 RUN ["/bin/bash", "-c","./usr/src/bacula/scripts/installWebBacula.sh"]
 ##
 
