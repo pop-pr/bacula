@@ -24,9 +24,21 @@ services:
         target: /etc/bacula
     networks:
       rede_gerencia:
+        ipv4_address: 172.16.0.181
+      default:    
+    depends_on: 
+      - catalog
+    restart: always
+  webacula:
+    container_name: webacula
+    image: 172.16.0.145:5000/webacula:latest
+    tty: true    
+    networks:
+      rede_gerencia:
         ipv4_address: 172.16.0.180
       default:    
     depends_on: 
+      - director
       - catalog
     restart: always
 networks:
