@@ -18,6 +18,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     bacula-console \    
     bacula-common-mysql \
     bacula-director-mysql \
+    bacula-director \
     bacula-fd \
     bacula-sd \     
     && apt-get clean && rm -rf /var/lib/apt/lists/*
