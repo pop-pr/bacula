@@ -59,21 +59,6 @@ COPY templates/pools.conf /usr/src/bacula/pools/
 COPY templates/schedules.conf /usr/src/bacula/schedules/
 ##
 
-## WEBACULA
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    apache2 \
-    libapache2-mod-php \
-    php \
-    php-curl \
-    php-dev \
-    php-gd \    
-    php-mcrypt \    
-    php-mysqlnd     
-
-COPY ./scripts /usr/src/bacula/scripts/
-RUN ["/bin/bash", "-c","./usr/src/bacula/scripts/installWebBacula.sh"]
-##
-
 VOLUME /etc/bacula
 
 COPY ./scripts/entrypoint.sh /docker-entrypoint.d
