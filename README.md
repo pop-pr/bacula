@@ -8,10 +8,9 @@ O repsitório consiste em scripts, arquivos templates de configuração, Dockerf
 
 - Uma máquina docker MYSQL 5.7 que serve como catálogo da máquina diretora.
      
-- Uma máquina diretora com dois serviços:
+- Uma máquina diretora com o Daemon do Bacula-Director, dinamicamente configurado e pronto para se comunicar com o catálogo, além de estar pronto para receber instruções para configuração dinãmica de novos clientes.
 
-    - Daemon do Bacula-Director, dinamicamente configurado e pronto para se comunicar com o catálogo, além de estar pronto para receber instruções via ansible para configuração dinãmica de novos clientes.
-    - O serviço WEB → WEB BACULA, uma GUI para utilizar o console.
+- Uma máquina ubuntu com o serviço WEB → WEB BACULA, uma GUI para utilizar o console.
          
 ## Passos para instação:
 - Requisitos:
