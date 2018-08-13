@@ -61,13 +61,13 @@ COPY templates/schedules.conf /usr/src/bacula/schedules/
 
 # Scripts and handlers
 
-COPY ./scritps/bacula/ /usr/src/bacula/scripts/
+COPY scripts/bacula/ /usr/src/bacula/scripts/
 
 
 VOLUME /etc/bacula
 
-COPY ./scripts/docker/entrypoint.sh /docker-entrypoint.d
-COPY ./scripts/docker/healthcheck.sh /docker-healthcheck.d
+COPY scripts/docker/entrypoint.sh /docker-entrypoint.d
+COPY scripts/docker/healthcheck.sh /docker-healthcheck.d
 RUN chmod +x /docker-entrypoint.d/entrypoint.sh
 RUN chmod +x /docker-healthcheck.d/healthcheck.sh
 
