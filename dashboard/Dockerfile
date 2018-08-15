@@ -14,7 +14,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     php-dev \
     php-gd \    
     php-mcrypt \    
-    php-mysqlnd     
+    php-mysqlnd \
+    php-sqlite3     
 
 COPY ./scripts /usr/src/bacula/scripts/
 COPY ./scripts/entrypoint.sh /docker-entrypoint.d
