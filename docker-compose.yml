@@ -41,6 +41,18 @@ services:
       - director
       - catalog
     restart: always
+  bdashboard:
+    container_name: bdashboard
+    image: 172.16.0.145:5000/bdashboard:latest
+    tty: true    
+    networks:
+      rede_gerencia:
+        ipv4_address: 172.16.0.183
+      default:    
+    depends_on: 
+      - director
+      - catalog
+    restart: always
 networks:
   rede_gerencia:
     external: true
