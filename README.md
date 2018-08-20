@@ -4,20 +4,30 @@
 ## O repositório:
 
 
-O repsitório consiste em scripts, arquivos templates de configuração, Dockerfile e Docker-compose que descrevem 3 serviços:
+O repsitório consiste em scripts, arquivos templates de configuração, Dockerfile e Docker-compose que descrevem 4 serviços:
 
 - Uma máquina docker MYSQL 5.7 que serve como catálogo da máquina diretora.
      
 - Uma máquina diretora com o Daemon do Bacula-Director, dinamicamente configurado e pronto para se comunicar com o catálogo, além de estar pronto para receber instruções para configuração dinãmica de novos clientes.
 
 - Uma máquina ubuntu com o serviço WEB → WEB BACULA, uma GUI para utilizar o console.
-         
-## Passos para instação:
-- Requisitos:
-    - Docker engine 17+
-    - Docker-compose 2+
+ 
+- Uma maquina ubuntu com o serviço WEB → BACULA WEB DASHBOARD, informações relevantes sobre os jobs.
+ 
+
+## Requisitos para a instalação:
+    
+- Docker engine 17+
+- Docker-compose 2+
+    
+
+## Passos para instalação:
 - Clone o repositório
 - docker-compose up
+ 
+
+## Utilização:
+- Utilize o ansible para dinamicamente configurar clientes e storages no diretor. 
 
 Informação Adicional
 ------------------
