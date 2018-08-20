@@ -7,6 +7,14 @@ CP="/bin/cp -Rf"
 CHWON="/bin/chown -R"
 BACULA_LOG="/var/log/bacula/bacula.log"
 
+test_mysql_conn()
+{
+    while ! mysqladmin ping -h "catalog" --silent; do
+        sleep 1
+    done  
+    return
+}
+
 start_process()
 {
     echo "Starting processes..."
@@ -81,8 +89,9 @@ console_log()
 
 main()
 {
+    test_mysql_conn
     test_lock
-    local lock=$?    
+    local lock=$?        
     if [ $lock -eq 0 ]; then
         start_process
         test_bacula
