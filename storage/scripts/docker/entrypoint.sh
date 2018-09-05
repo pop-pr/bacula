@@ -7,34 +7,22 @@ CP="/bin/cp -Rf"
 CHWON="/bin/chown -R"
 BACULA_LOG="/var/log/bacula/bacula.log"
 
-test_mysql_conn()
-{
-    while ! mysqladmin ping -h "catalog" --silent; do
-        sleep 1
-    done  
-    return
+test_bacula_conf()
+{   local retval=1
+    bacula-sd -t && retval=0
+    return $retval
 }
 
 start_process()
 {
-    echo "Starting processes..."
-    # /etc/init.d/bacula-fd start 
-    /etc/init.d/bacula-sd start 
-    # /etc/init.d/bacula-director start     
-    # /etc/init.d/ntp start 
-    /etc/init.d/apache2 start            
-    echo "Done!"    
-}
-
-test_bacula()
-{
-    local result=1
-    local retval=1
-    echo 'reload' | bconsole && result=0
-    if [ $result -eq 0 ]; then
-        retval=0    
+    local retval=test_bacula_conf
+    if [ $retval -eq 0 ]; then
+        echo "Starting processes..."    
+        /etc/init.d/bacula-sd start     
+        echo "Done!"    
+    else
+        echo "There is a problem with bacula configuration, please review bacula-sd.conf file or run the ansible storage recipe"
     fi
-    return $retval
 }
 
 test_lock()
@@ -83,26 +71,22 @@ console_log()
     echo "Creating log file..."
     touch $BACULA_LOG
     chown bacula:bacula $BACULA_LOG    
-    echo "Reading bacula messages"
-    echo "LOG START" >> $BACULA_LOG        
+    echo "Reading bacula messages"    
 }
 
 main()
-{
-    #test_mysql_conn
+{    
     test_lock
     local lock=$?        
     if [ $lock -eq 0 ]; then
-        start_process
-        #test_bacula
+        start_process    
         console_log                
     else    
         copy_files    
         local result=$?    
         create_lock $result            
         change_perms
-        start_process
-        #test_bacula
+        start_process    
         local test=$?    
         if [ $test -eq 1 ]; then        
             echo 'Failed'

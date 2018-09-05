@@ -1,7 +1,7 @@
 FROM ubuntu:latest    
 
 ## Exclude documentation
-COPY templates/01_nodoc /etc/dpkg/dpkg.cfg.d/
+# COPY templates/01_nodoc /etc/dpkg/dpkg.cfg.d/
 ##
 
 ## Set TZDAT to America/Sao_paulo

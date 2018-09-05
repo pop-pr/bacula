@@ -1,0 +1,17 @@
+version: '2.3'
+services:
+  storage:
+    container_name: bacula_storage
+    image: bstorage:latest
+    tty: true
+    volumes:
+      - type: bind
+        source: ./data
+        target: /etc/bacula
+    ports:
+      - 9103:9103
+    networks:
+      default:
+    restart: always
+networks:
+  default:
