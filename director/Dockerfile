@@ -4,15 +4,10 @@ FROM ubuntu:latest
 COPY templates/01_nodoc /etc/dpkg/dpkg.cfg.d/
 ##
 
-## Set TZDAT to America/Sao_paulo
-ENV TZ=America/Sao_Paulo
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-##
-
 ## Installs bacula packages
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"]
-RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/mailname string desenvolvimento@pop-pr.rnp.br'"]
+RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/mailname string backup@bacula.com'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'postfix postfix/main_mailer_type string' 'Internet Site'"]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     bacula-console \    
