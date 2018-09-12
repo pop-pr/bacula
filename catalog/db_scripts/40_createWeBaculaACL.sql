@@ -1,15 +1,5 @@
-#!/bin/bash
-#
-# Script to create Webacula ACLs tables in Bacula database
-#
-db_name=${db_name:-bacula}
-# The default password is 'bacula'
-# Do not modify the string below
-wb_pwd='$P$BWvNstbpxxsvvnFkE90C6OfZxFS61P1'
-
-mysql $* -f <<END-OF-DATA
-use ${db_name};
-
+SET sql_mode = '';
+USE bacula; 
 CREATE TABLE IF NOT EXISTS webacula_users (
     id              int(11) NOT NULL AUTO_INCREMENT,
     login           varchar(50) NOT NULL,
@@ -281,14 +271,3 @@ CREATE TABLE IF NOT EXISTS webacula_php_session (
     login           varchar(50) DEFAULT NULL,
     PRIMARY KEY (id)
 );
-
-END-OF-DATA
-
-if [ $? -eq 0 ]
-then
-   echo "MySQL: creation of Webacula ACL tables succeeded."
-else
-   echo "MySQL: creation of Webacula ACL tables failed!"
-   exit 1
-fi
-exit 0
