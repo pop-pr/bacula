@@ -2,12 +2,7 @@ version: '2.3'
 services:  
   catalog:
     container_name: bacula_catalog
-    image: mysql:5.7
-    environment: 
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: bacula
-      MYSQL_USER: bacula
-      MYSQL_PASSWORD: bacula
+    image: popprrnp/bacula-catalog:latest
     volumes:
       - ./catalog/data:/var/lib/mysql
       - ./catalog/db_scripts:/docker-entrypoint-initdb.d/
