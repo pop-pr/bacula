@@ -1,6 +1,6 @@
 # POP-PR - Bacula on Docker Project
 
-Você pode ler esse documento em português [aqui](https://github.com/PoP-PR/bacula/blob/master/README.pt-br.md "Leia-me!").
+Você pode ler esse documento em português [aqui](https://github.com/PoP-PR/bacula/blob/master/README.md "Leia-me!").
 
 
 The main goal of this project is to build, run and deploy the OpenSource Bacula 9+ project inside a docker micro-service environment. You can read more about bacula [here](http://http://blog.bacula.org/ "Bacula Org")
