@@ -26,6 +26,7 @@ The following components are required for this setup:
 
 You can modify the docker-compose.yml file to add Network configuration, presuming the containers can see each other. You can encapsulate the catalog in a default docker network and create valid interfaces for the web-services, if you want to.
 
+More in [docker-docs](link "Docker Networks").
 ## Starting the setup
 
 docker-compose pull
@@ -46,43 +47,77 @@ docker-compose stop
 
 ### Volumes
 
-Configuration files for the director are stored inside $PWD/director/data (Relative to docker-compose.yml location), this is the volume that represents /etc/bacula. You can create this directory ($PWD/director/data) by hand or use the tree provided with this project. The [bacula-director.conf](https://github.com/PoP-PR/bacula/blob/master/director/templates/bacula-dir.conf "bacula-director.conf file") file has been modified so new conf (such as client for example) are stored in /data/clients/client-XYZ.conf, the same for pools, storages, schedules and so on. 
+Configuration files for the director are stored inside $PWD/director/data (Relative to docker-compose.yml location),this is the volume that represents /etc/bacula. You can create this directory ($PWD/director/data) by hand or use the tree provided with this project. The [bacula-director.conf](https://github.com/PoP-PR/bacula/blob/master/director/templates/bacula-dir.conf "bacula-director.conf file") file has been modified so new conf (such as client for example) are stored in /data/clients/client-XYZ.conf, the same for pools, storages, schedules and so on. 
 
 Catalog data persistence (AKA mysql datafiles) follows the same procedure. 
 All data inside /var/lib/mysql is stored in $PWD/catalog/data (Relative to docker-compose.yml location).
 
-### Bacula
+### Bacula Console
+
+In order to access the bconsole, you can open a TTY session with the director's container and then run "bconsole", as you normally would do. 
+
+You can also configure an instance of the bconsole program in any machine on the same network.
+
+### Bconsole Reload
 
 In order to apply new configuration to the director, you should reload bacula console. 
 
 To do that you can:
-
-#### The Classic way:
+ 
 Get to the director TTY and type: 
 ```bash 
 echo "reload" | bconsole 
 ```
-
-
-#### The Docker way:
+or
 ```bash 
 docker exec -ti bacula-dir bconsole
 ```
 
+### Bacula Resources
 
-#### The AWESOME way:
+To make changes to the director's configuration, or to add new clients / storages, you must add the resource files with the .conf extension within the subdirectories of the director's persistence volume.
+
+The bacula-director.conf file has been modified to read all the files in the subfolders (/ storages, / clients, / schedules, / pools, etc) and concatenate its contents in the director's configuration, this facilitates the addition / removal of features and allows the automation of some configurations.
+
+Example:
+
+To add a new pool resource, instead of editing the bacula-director.conf file, you can create a file
+name_pool.conf into the subfolder / pools / and then reload the director with the 'reload' command inside the bconsole.
+
+An example file of this resource could be:
+
+```conf
+Pool {
+  Name = example_pool
+  Pool Type = Backup
+  Recycle = yes                       # Bacula can automatically recycle Volumes
+  AutoPrune = yes                     # Prune expired volumes
+  Volume Retention = 365 days         # one year
+  Maximum Volume Bytes = 50G          # Limit Volume size to something reasonable
+  Maximum Volumes = 100
+  Label Format = "example_vol-"       # Limit number of Volumes in Pool
+}
+```
+The same goes for every resource, for clients and storages the process can be automated.
+
+### The AWESOME way: Automating Client/Storage configuration with Ansible.
+
 [Use these Ansible roles to automate client/storage configuration/communication](https://github.com/PoP-PR/ansible-bacula "POP-PR ansible-bacula Project"). 
+
+With [Ansible](https://www.ansible.com/ "Official Ansible Page") you can simply run playbooks and it will ensure that the configuration and communication between a client and the director will be performed, as well as running handlers which will reload the director. This is, without a doubt, the best way to configure new resources.
 
 Simply run the playbook, grab a cup of coffee and behold the automated way of doing configuration!
 
-### Bacula clients and Storages.
+To learn more about this amazing technology [read the docs](https://docs.ansible.com/ "Ansible Docs").
 
-As said before, you can configure bacula-clients by adding resources to the director client's folder, but the best way of doing that is with [Ansible](https://www.ansible.com/ "Official Ansible Page"). To learn more about this technology and how to use it, visit our [ansible-bacula project on github](https://github.com/PoP-PR/ansible-bacula "POP-PR ansible-bacula Project") and read some of the [Official Ansible Documentation](https://docs.ansible.com/ "Ansible Docs").
 
 ### Catalog
 
-Default bacula database + Bacula-web database
-Default passwords for mysql are: root|root and bacula|bacula
+The Catalog is configured the first time you run the compose and creates two users:
+
+bacula | bacula and root | root.
+
+Raises the default bacula Catalog database and creates extra tables for the Bacula-WEB GUI.
 
 ## Support
 
@@ -148,10 +183,6 @@ networks:
 Provided containers uses the [bacula-web](https://www.bacula-web.org/ "bacula web-Dashboard") for the Dashboard and [web-bacula](https://github.com/wanderleihuttel/webacula "Web-bacula Project") for the WEB-GUI. you can map the ports in docker-compose file as you want, or use Network features to give them Ipv4 addresses.
 
 If you used the provided docker-compose file you can access them at http://localhost:9001/bdashboard and http://localhost:9002/webacula/.
-
-Issues: 
-
-If you are dealing with PDO exceptions in the web-bacula interface, make sure to get to the catalog TTY and run    30_createBaculaWebTables.sh -p < password >  and 40_createWeBaculaACL.sh -p < password >  these scripts are inside /docker-entrypoint-initdb.d/
 
 ## Copyright and license
 
