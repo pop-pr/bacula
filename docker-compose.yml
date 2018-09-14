@@ -3,9 +3,10 @@ services:
   catalog:
     container_name: bacula_catalog
     image: popprrnp/bacula-catalog:latest
+    environment: 
+      MYSQL_ROOT_PASSWORD: root      
     volumes:
-      - ./catalog/data:/var/lib/mysql
-      - ./catalog/db_scripts:/docker-entrypoint-initdb.d/
+      - ./catalog/data:/var/lib/mysql      
     networks: 
       default:
     restart: always
@@ -14,9 +15,7 @@ services:
     image: popprrnp/bacula-dir:latest
     tty: true
     volumes:
-      - type: bind
-        source: ./director/data
-        target: /etc/bacula
+      - ./director/data:/etc/bacula/
     networks:      
       default:    
     depends_on: 
@@ -26,6 +25,8 @@ services:
     container_name: webacula
     image: popprrnp/web-bacula-gui:latest
     tty: true    
+    ports:
+      - 9002:80
     networks:      
       default:    
     depends_on: 
@@ -35,7 +36,9 @@ services:
   bdashboard:
     container_name: bdashboard
     image: popprrnp/bacula-dashboard:latest
-    tty: true    
+    tty: true  
+    ports:
+      - 9001:80  
     networks:      
       default:    
     depends_on: 
