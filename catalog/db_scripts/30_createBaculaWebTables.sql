@@ -78,6 +78,8 @@ CREATE TABLE webacula_job_size (
 	PRIMARY KEY (JobId)
 );
 
+-- Function base64_decode_lstat (Decode field LStat from table File)
+DELIMITER ;;
 CREATE FUNCTION base64_decode_lstat(vField INTEGER, vInput BLOB) RETURNS bigint(20)
    DETERMINISTIC
    SQL SECURITY INVOKER
@@ -91,8 +93,11 @@ BEGIN
      SET accum_value = (accum_value << 6) + INSTR('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',first_char)-1;
    END WHILE;
    RETURN accum_value;
-END;
+END ;;
+DELIMITER ;
  
+-- Function human_size (Convert bytes in more human readable format)
+DELIMITER ;;
 CREATE FUNCTION human_size(vBytes FLOAT) RETURNS varchar(20) CHARSET utf8
 BEGIN
 DECLARE i INT DEFAULT 1;
@@ -103,4 +108,6 @@ LOOP
    SET vBytes = vBytes / 1024;
    SET i = i + 1;
 END LOOP;
-END;
+END
+;;
+DELIMITER ;
