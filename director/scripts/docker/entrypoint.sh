@@ -20,9 +20,7 @@ start_process()
     echo "Starting processes..."
     /etc/init.d/bacula-fd start 
     /etc/init.d/bacula-sd start 
-    /etc/init.d/bacula-director start     
-    /etc/init.d/ntp start 
-    /etc/init.d/apache2 start            
+    /etc/init.d/bacula-director start              
     echo "Done!"    
 }
 
