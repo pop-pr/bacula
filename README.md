@@ -186,6 +186,10 @@ Pode-se mapear as portas no docker-compose.yml ou, se preferível, utilizar o re
 
 Se você não fez modificações ao compose, pode-se acessa-los em: http://localhost:9001/bdashboard and http://localhost:9002/webacula/.
 
+O usuário default do Dashboard é: admin|bacula.
+
+O usuário default do Webacula é: root|bacula.
+
 ## Copyright and license
 
 General Public License

@@ -1,5 +1,6 @@
 SET sql_mode = '';
-USE bacula; 
+USE bacula;
+
 CREATE TABLE IF NOT EXISTS webacula_users (
     id              int(11) NOT NULL AUTO_INCREMENT,
     login           varchar(50) NOT NULL,
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS webacula_dt_resources (
 
 
 INSERT INTO webacula_roles (id, name, description) VALUES (1, 'root_role', 'Default built-in superuser role');
-INSERT INTO webacula_users (id, login, pwd, name, active, create_login, role_id) VALUES (1000, 'root', '$wb_pwd', 'root', 1, NOW(), 1);
+INSERT INTO webacula_users (id, login, pwd, name, active, create_login, role_id) VALUES (1000, 'root', '$P$BWvNstbpxxsvvnFkE90C6OfZxFS61P1', 'root', 1, NOW(), 1);
 INSERT INTO webacula_roles (id, name, description) VALUES (2, 'operator_role', 'Typical built-in role for backup operator');
 INSERT INTO webacula_resources (dt_id, role_id) VALUES
     (10,2),
